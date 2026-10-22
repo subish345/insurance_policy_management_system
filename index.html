@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Insurance Agency Management System</title>
+  <!-- Google Fonts for clean, readable typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    /* -------------------------------------------------------------
+       1. MINIMALIST CSS STYLING (EASY TO READ & UNDERSTAND)
+       ------------------------------------------------------------- */
+    :root {
+      --primary: #2563eb;         /* Clean Royal Blue */
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;              /* Soft Light Background */
+      --card-bg: #ffffff;         /* Pure White Card */
+      --text-main: #0f172a;       /* Dark Slate Text */
+      --text-muted: #64748b;      /* Muted Gray Text */
+      --border: #e2e8f0;          /* Clean Light Border */
+      --success: #15803d;        /* Green for success */
+      --danger: #dc2626;         /* Red for delete/errors */
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 30px 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 30px;
+      margin-bottom: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-title h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .header-title p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .status-badge {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--success);
+      background: #dcfce7;
+      padding: 6px 12px;
+      border-radius: 20px;
+    }
+
+    /* TWO COLUMN GRID FOR FORMS */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* SIMPLE CARD CONTAINER */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .card h2 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* FORM INPUTS & LABELS */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      font-size: 0.92rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    /* BUTTONS */
+    button {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 11px 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      margin-top: 8px;
+    }
+
+    button:hover {
+      background: var(--primary-hover);
+    }
+
+    button:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    /* CALCULATION PREVIEW BOX */
+    .calc-box {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 14px;
+      margin: 14px 0;
+      font-size: 0.86rem;
+    }
+
+    .calc-box-title {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .calc-formula {
+      font-family: 'Roboto Mono', monospace;
+      color: #334155;
+      font-size: 0.82rem;
+      margin-bottom: 8px;
+      background: #fff;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .calc-result {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--success);
+    }
+
+    /* MESSAGES */
+    .msg {
+      margin-top: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 6px;
+      display: none;
+    }
+
+    .msg.success {
+      display: block;
+      background: #dcfce7;
+      color: var(--success);
+    }
+
+    .msg.error {
+      display: block;
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    /* POLICY PORTFOLIO TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    th {
+      background-color: #f8fafc;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .policy-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .tag-health { background: #d1fae5; color: #065f46; }
+    .tag-life { background: #ede9fe; color: #5b21b6; }
+    .tag-vehicle { background: #fef3c7; color: #92400e; }
+    .tag-home { background: #cffafe; color: #155e75; }
+
+    .btn-delete {
+      background: #fee2e2;
+      color: var(--danger);
+      border: 1px solid #fca5a5;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: auto;
+      margin: 0;
+    }
+
+    .btn-delete:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    .empty-message {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 30px;
+      font-style: italic;
+    }
+
+    /* REFERENCE MATRIX SECTION */
+    .reference-section {
+      margin-top: 24px;
+    }
+
+    .ref-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 768px) {
+      .grid-2, .ref-grid {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header>
+      <div class="header-title">
+        <h1>Insurance Agency Management System</h1>
+        <p>Manage Customers, Issue Policies, and Calculate Annual Premiums</p>
+      </div>
+      <div class="status-badge">System Connected</div>
+    </header>
+
+    <!-- MAIN TWO-COLUMN WORKSPACE -->
+    <div class="grid-2">
+
+      <!-- 1. ADD CUSTOMER FORM -->
+      <div class="card">
+        <h2>1. Register Customer</h2>
+        <form id="customerForm">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" placeholder="e.g., Arjun Kumar" required>
+          </div>
+
+          <div class="form-group">
+            <label for="age">Customer Age (Years)</label>
+            <input type="number" id="age" min="18" max="100" placeholder="e.g., 35" required>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" placeholder="e.g., +91 98765 43210" required>
+          </div>
+
+          <button type="submit" id="btnCustomerSubmit">Add Customer</button>
+          <div id="customerMsg" class="msg"></div>
+        </form>
+      </div>
+
+      <!-- 2. ISSUE POLICY FORM -->
+      <div class="card">
+        <h2>2. Issue Policy &amp; Calculate Premium</h2>
+        <form id="policyForm">
+          <div class="form-group">
+            <label for="policyCustomerSelect">Select Customer</label>
+            <select id="policyCustomerSelect" required>
+              <option value="">-- Choose Customer --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="policyType">Policy Type</label>
+            <select id="policyType" required>
+              <option value="HEALTH">Health Insurance (3.0% Base Rate)</option>
+              <option value="LIFE">Life Insurance (2.0% Base Rate)</option>
+              <option value="VEHICLE">Vehicle Insurance (4.0% Base Rate)</option>
+              <option value="HOME">Home Insurance (1.5% Base Rate)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="coverageAmount">Coverage Amount (INR ₹)</label>
+            <input type="number" id="coverageAmount" min="10000" step="5000" value="500000" required>
+          </div>
+
+          <!-- Dynamic Live Calculation Preview -->
+          <div class="calc-box">
+            <div class="calc-box-title">Live Premium Calculation:</div>
+            <div class="calc-formula" id="formulaText">Select a customer to see formula breakdown</div>
+            <div class="calc-result">
+              <span>Annual Premium:</span>
+              <span id="calculatedPremiumText">₹0.00</span>
+            </div>
+          </div>
+
+          <button type="submit" id="btnPolicySubmit">Calculate &amp; Issue Policy</button>
+          <div id="policyMsg" class="msg"></div>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- 3. CUSTOMER POLICIES TABLE (1-TO-MANY LISTING) -->
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2>3. Customer Policies Portfolio</h2>
+        <div style="min-width: 250px;">
+          <select id="filterCustomerSelect">
+            <option value="ALL">Show All Customers &amp; Policies</option>
+          </select>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Customer Name</th>
+            <th>Age</th>
+            <th>Policy ID</th>
+            <th>Policy Type</th>
+            <th>Coverage Amount</th>
+            <th>Calculated Annual Premium</th>
+            <th style="text-align: right;">Action</th>
+          </tr>
+        </thead>
+        <tbody id="policiesTableBody">
+          <tr>
+            <td colspan="7" class="empty-message">No customer or policy records found. Add a customer above to begin.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4. BEGINNER-FRIENDLY FORMULA REFERENCE GUIDE -->
+    <div class="card reference-section">
+      <h2>4. Calculation Formula Reference</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
+        The annual premium is calculated inside the backend Java <code>Policy</code> class using:
+        <strong>Annual Premium = (Coverage Amount × Base Rate) × Age Risk Multiplier</strong>
+      </p>
+
+      <div class="ref-grid">
+        <div>
+          <table style="margin-top: 0;">
+            <thead>
+              <tr><th>Policy Type</th><th>Base Rate</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Health (HEALTH)</td><td>3.0% (0.030)</td></tr>
+              <tr><td>Life (LIFE)</td><td>2.0% (0.020)</td></tr>
+              <tr><td>Vehicle (VEHICLE)</td><td>4.0% (0.040)</td></tr>
+              <tr><td>Home (HOME)</td><td>1.5% (0.015)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <table style="margin-top: 0;">
+            <thead>
+              <tr><th>Customer Age</th><th>Age Risk Multiplier</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Under 25 years</td><td>1.10x</td></tr>
+              <tr><td>25 to 40 years</td><td>1.00x (Standard)</td></tr>
+              <tr><td>41 to 60 years</td><td>1.35x</td></tr>
+              <tr><td>Above 60 years</td><td>1.75x</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- -------------------------------------------------------------
+       2. JAVASCRIPT LOGIC (SIMPLE, CLEAN & WELL-COMMENTED)
+       ------------------------------------------------------------- -->
+  <script>
+    // In-memory cache of customers retrieved from the backend
+    let customersList = [];
+
+    // Base rates matching the backend Java logic
+    const BASE_RATES = {
+      HEALTH: 0.030,
+      LIFE: 0.020,
+      VEHICLE: 0.040,
+      HOME: 0.015
+    };
+
+    // Helper: Determine age multiplier matching backend logic
+    function getAgeMultiplier(age) {
+      if (age < 25) return 1.10;
+      if (age <= 40) return 1.00;
+      if (age <= 60) return 1.35;
+      return 1.75;
+    }
+
+    // Helper: Format numbers as Indian Rupee currency (e.g. ₹5,00,000.00)
+    function formatMoney(amount) {
+      return '₹' + Number(amount || 0).toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    // Helper: Display user-friendly notification message
+    function showMessage(elementId, text, isSuccess) {
+      const el = document.getElementById(elementId);
+      el.textContent = text;
+      el.className = 'msg ' + (isSuccess ? 'success' : 'error');
+      setTimeout(() => {
+        el.className = 'msg';
+      }, 5000);
+    }
+
+    // -----------------------------------------------------------
+    // Function 1: Fetch all customers and policies from Java API
+    // -----------------------------------------------------------
+    async function loadCustomers() {
+      try {
+        const response = await fetch('/api/customers');
+        customersList = await response.json();
+
+        updateCustomerDropdowns();
+        renderTable();
+        updateCalculationPreview();
+      } catch (error) {
+        console.error('Failed to load customers:', error);
+      }
+    }
+
+    // -----------------------------------------------------------
+    // Function 2: Populate customer select dropdowns
+    // -----------------------------------------------------------
+    function updateCustomerDropdowns() {
+      const issueSelect = document.getElementById('policyCustomerSelect');
+      const filterSelect = document.getElementById('filterCustomerSelect');
+
+      const savedIssueVal = issueSelect.value;
+      const savedFilterVal = filterSelect.value || 'ALL';
+
+      issueSelect.innerHTML = '<option value="">-- Choose Customer --</option>';
+      filterSelect.innerHTML = '<option value="ALL">Show All Customers & Policies</option>';
+
+      customersList.forEach(c => {
+        const label = `#${c.customerId} - ${c.fullName} (Age: ${c.age})`;
+        issueSelect.innerHTML += `<option value="${c.customerId}">${label}</option>`;
+        filterSelect.innerHTML += `<option value="${c.customerId}">${label}</option>`;
+      });
+
+      if (savedIssueVal) issueSelect.value = savedIssueVal;
+      filterSelect.value = savedFilterVal;
+    }
+
+    // -----------------------------------------------------------
+    // Function 3: Update live calculation preview box
+    // -----------------------------------------------------------
+    function updateCalculationPreview() {
+      const custId = document.getElementById('policyCustomerSelect').value;
+      const policyType = document.getElementById('policyType').value;
+      const coverage = parseFloat(document.getElementById('coverageAmount').value) || 0;
+      const baseRate = BASE_RATES[policyType] || 0.025;
+
+      const customer = customersList.find(c => String(c.customerId) === String(custId));
+
+      if (!customer) {
+        document.getElementById('formulaText').textContent = 'Please select a customer above to calculate premium.';
+        document.getElementById('calculatedPremiumText').textContent = '₹0.00';
+        return;
+      }
+
+      const age = customer.age;
+      const multiplier = getAgeMultiplier(age);
+      const calculated = Math.round((coverage * baseRate * multiplier) * 100.0) / 100.0;
+
+      document.getElementById('formulaText').textContent = 
+        `(${formatMoney(coverage)} × ${(baseRate * 100).toFixed(1)}%) × ${multiplier.toFixed(2)}x (Age ${age}) = ${formatMoney(calculated)}`;
+      document.getElementById('calculatedPremiumText').textContent = formatMoney(calculated) + ' / yr';
+    }
+
+    // -----------------------------------------------------------
+    // Function 4: Render policies table
+    // -----------------------------------------------------------
+    function renderTable() {
+      const tbody = document.getElementById('policiesTableBody');
+      const filterId = document.getElementById('filterCustomerSelect').value;
+      tbody.innerHTML = '';
+
+      // Filter customers if a specific one is selected
+      const filtered = (filterId === 'ALL')
+        ? customersList
+        : customersList.filter(c => String(c.customerId) === String(filterId));
+
+      let totalRows = 0;
+
+      filtered.forEach(c => {
+        if (!c.policies || c.policies.length === 0) {
+          totalRows++;
+          tbody.innerHTML += `
+            <tr>
+              <td><strong>#${c.customerId} ${c.fullName}</strong></td>
+              <td>${c.age} yrs</td>
+              <td colspan="4" style="color: #64748b; font-style: italic;">No policies issued yet for this customer.</td>
+              <td style="text-align: right;">
+                <button class="btn-delete" onclick="deleteCustomer(${c.customerId})">Delete Customer</button>
+              </td>
+            </tr>
+          `;
+        } else {
+          c.policies.forEach(p => {
+            totalRows++;
+            tbody.innerHTML += `
+              <tr>
+                <td><strong>#${c.customerId} ${c.fullName}</strong></td>
+                <td>${c.age} yrs</td>
+                <td><strong>POL-${p.policyId}</strong></td>
+                <td><span class="policy-tag tag-${p.policyType.toLowerCase()}">${p.policyType}</span></td>
+                <td>${formatMoney(p.coverageAmount)}</td>
+                <td><strong style="color: var(--success);">${formatMoney(p.premium)} / yr</strong></td>
+                <td style="text-align: right;">
+                  <button class="btn-delete" onclick="deletePolicy(${p.policyId})">Delete</button>
+                </td>
+              </tr>
+            `;
+          });
+        }
+      });
+
+      if (totalRows === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="empty-message">No customer or policy records found. Add a customer above to begin.</td>
+          </tr>
+        `;
+      }
+    }
+
+    // -----------------------------------------------------------
+    // Event: Submit Add Customer Form
+    // -----------------------------------------------------------
+    document.getElementById('customerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        fullName: document.getElementById('fullName').value.trim(),
+        age: document.getElementById('age').value,
+        phone: document.getElementById('phone').value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/customers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to add customer');
+        }
+
+        const created = await res.json();
+        showMessage('customerMsg', `Customer #${created.customerId} (${created.fullName}) added successfully!`, true);
+        document.getElementById('customerForm').reset();
+
+        await loadCustomers();
+        document.getElementById('policyCustomerSelect').value = created.customerId;
+        updateCalculationPreview();
+      } catch (err) {
+        showMessage('customerMsg', err.message, false);
+      }
+    });
+
+    // -----------------------------------------------------------
+    // Event: Submit Issue Policy Form
+    // -----------------------------------------------------------
+    document.getElementById('policyForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const payload = {
+        customerId: document.getElementById('policyCustomerSelect').value,
+        policyType: document.getElementById('policyType').value,
+        coverageAmount: document.getElementById('coverageAmount').value
+      };
+
+      try {
+        const res = await fetch('/api/policies', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Failed to issue policy');
+        }
+
+        const created = await res.json();
+        showMessage('policyMsg', `Policy POL-${created.policyId} (${created.policyType}) issued! Premium: ${formatMoney(created.premium)}/yr`, true);
+
+        await loadCustomers();
+      } catch (err) {
+        showMessage('policyMsg', err.message, false);
+      }
+    });
+
+    // -----------------------------------------------------------
+    // Event: Delete Policy
+    // -----------------------------------------------------------
+    async function deletePolicy(policyId) {
+      if (!confirm(`Are you sure you want to delete Policy POL-${policyId}?`)) return;
+      try {
+        const res = await fetch(`/api/policies?id=${policyId}`, { method: 'DELETE' });
+        if (res.ok) {
+          loadCustomers();
+        }
+      } catch (e) {
+        alert('Failed to delete policy: ' + e.message);
+      }
+    }
+
+    // -----------------------------------------------------------
+    // Event: Delete Customer
+    // -----------------------------------------------------------
+    async function deleteCustomer(customerId) {
+      if (!confirm(`Are you sure you want to delete Customer #${customerId}?`)) return;
+      try {
+        const res = await fetch(`/api/customers?id=${customerId}`, { method: 'DELETE' });
+        if (res.ok) {
+          loadCustomers();
+        }
+      } catch (e) {
+        alert('Failed to delete customer: ' + e.message);
+      }
+    }
+
+    // Event Listeners for Live Calculation Preview
+    document.getElementById('policyCustomerSelect').addEventListener('change', updateCalculationPreview);
+    document.getElementById('policyType').addEventListener('change', updateCalculationPreview);
+    document.getElementById('coverageAmount').addEventListener('input', updateCalculationPreview);
+
+    // Event Listener for Portfolio Filter Dropdown
+    document.getElementById('filterCustomerSelect').addEventListener('change', renderTable);
+
+    // Initial page load
+    loadCustomers();
+  </script>
+</body>
+</html>

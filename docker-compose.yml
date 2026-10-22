@@ -1,0 +1,51 @@
+# ==============================================================================
+# Docker & Podman Compose Configuration
+# OmniShield Insurance Agency Management System
+# ==============================================================================
+# Compatible with:
+#   - Docker Compose on Windows, macOS, and Linux
+#   - Podman Compose / 'podman compose'
+# ==============================================================================
+
+services:
+  # 1. Relational Database Service (MariaDB / MySQL)
+  db:
+    image: docker.io/library/mariadb:11
+    container_name: insurance-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: insurance_db
+    ports:
+      # Map to host port 3307 by default to avoid conflicts if local MySQL is running on 3306
+      - "${DB_HOST_PORT:-3307}:3306"
+    volumes:
+      # Automatically initialize database schema and seed data on first launch
+      - ./schema.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+      # Persist database storage
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mariadb-admin ping -h localhost -u root -proot || mysqladmin ping -h localhost -u root -proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # 2. Core Java Application & Web Dashboard Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: insurance-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      DB_URL: "jdbc:mysql://db:3306/insurance_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      DB_USER: "root"
+      DB_PASS: "root"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

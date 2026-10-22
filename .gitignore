@@ -1,0 +1,25 @@
+# Compiled Java Class Files
+*.class
+
+# Package Files
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Logs and databases
+*.log
+db_data/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+.~lock.*#
+
+# Virtual machine / container temp
+scratch/
+tmp/
+.idea/
+.vscode/
+*.iml
